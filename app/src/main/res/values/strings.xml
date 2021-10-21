@@ -1,3 +1,12 @@
 <resources>
-    <string name="app_name">Registration</string>
+    <string name="app_name">Vaccination Registration</string>
+    <string name="nama">Nama</string>
+    <string name="alamat">Alamat</string>
+    <string name="hp">No. Hp</string>
+    <string name="rbPria">Pria</string>
+    <string name="rbWanita">Wanita</string>
+    <string name="tvJenisKelamin">Jenis Kelamin</string>
+    <string name="tvLokasi">Lokasi Pendaftaran</string>
+    <string name="btnLokasi">Search</string>
+    <string name="tvUpload">Upload Foto</string>
 </resources>
