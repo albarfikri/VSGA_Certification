@@ -1,17 +1,23 @@
 package com.albar.registration
 
 import android.Manifest
+import android.content.ContentValues
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.location.Location
 import android.location.LocationManager
+import android.net.Uri
 import android.os.Bundle
 import android.os.Looper
+import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.albar.registration.databinding.ActivityMainBinding
 import com.google.android.gms.location.*
 import java.util.*
@@ -27,7 +33,7 @@ class MainActivity : AppCompatActivity() {
 
     // Permission id camera
     private val cameraRequestCode = 2000
-    private val storageResourceCode = 2001
+    private val storageRequestCode = 2001
 
     // Image Pick
     private val imagePickCameraCode = 2002
@@ -37,12 +43,24 @@ class MainActivity : AppCompatActivity() {
     private lateinit var cameraPermissions: Array<String>
     private lateinit var storagePermissions: Array<String>
 
+    // Variable to get Location
+    private var locationDetected: String? = null
+
+    // variables that will contain data to save in database
+    private var nama: String? = null
+    private var alamat: String? = null
+    private var noHp: String? = null
+    private var jenisKelamin: String? = null
+    private var lokasi: String? = null
+    private var imageUri: Uri? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Maps
         // Initiate fuse.providerclient
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
@@ -52,10 +70,116 @@ class MainActivity : AppCompatActivity() {
             binding.tvLokasi.text = getString(R.string.loading)
             getLastLocation()
         }
+
+        // Image
+        binding.profile.setOnClickListener {
+            // options to display
+            val options = arrayOf("Camera", "Gallery")
+            // settings dialog
+            val builder = AlertDialog.Builder(this)
+            // title
+            builder.setTitle("Pick Image From")
+            // set Item Options
+            builder.setItems(options) { _, selected ->
+                if (selected == 0) {
+                    //camera clicked
+                    if (!checkCameraPermissions()) {
+                        // Permission not granted
+                        requestCameraPermission()
+                    } else {
+                        // Permission already granted
+                        pickFromCamera()
+                    }
+                } else {
+                    //galery clicked
+                    if (!checkStoragePermission()) {
+                        requestStoragePermission()
+                    } else {
+                        pickFromGalery()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun inputData() {
+        nama = "" + binding.txtNama.text.toString()
+        alamat = "" + binding.txtAlamat.text.toString()
+        noHp = "" + binding.txtHp.text.toString()
+        jenisKelamin = when (binding.rgJenisKelamin.checkedRadioButtonId) {
+            R.id.rbPria -> "Pria"
+            R.id.rbWanita -> "Wanita"
+            else -> ""
+        }
+        lokasi = locationDetected
+        image
+    }
+
+
+    private fun pickFromGalery() {
+        val galleryIntent = Intent(Intent.ACTION_PICK)
+        galleryIntent.type = "image/*"
+        startActivityForResult(
+            galleryIntent,
+            imagePickGalleryCode
+        )
+    }
+
+    private fun requestStoragePermission() {
+        // request the storage permission
+        ActivityCompat.requestPermissions(this, storagePermissions, storageRequestCode)
+    }
+
+    private fun checkStoragePermission(): Boolean {
+        // Check if storage permission is enabled or not
+        return ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun pickFromCamera() {
+        // pick image from camera using intent
+        val values = ContentValues()
+        values.put(MediaStore.Images.Media.TITLE, "Image Title")
+        values.put(MediaStore.Images.Media.DESCRIPTION, "Image Description")
+        //put image uri
+        val imageUri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+        // intent at open camera
+        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
+        startActivityForResult(
+            cameraIntent,
+            imagePickCameraCode
+        )
+    }
+
+    private fun checkCameraPermissions(): Boolean {
+        // Check if camera permissions (Camera and Storage) are enabled or not
+        val results = ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.CAMERA
+        ) == PackageManager.PERMISSION_GRANTED
+
+        val results1 = ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.CAMERA
+        ) == PackageManager.PERMISSION_GRANTED
+
+        return results && results1
+    }
+
+    private fun requestCameraPermission() {
+        // request the camera permissions
+        ActivityCompat.requestPermissions(this, cameraPermissions, cameraRequestCode)
     }
 
     private fun initCameraPermissions() {
-
+        cameraPermissions = arrayOf(
+            Manifest.permission.CAMERA,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        )
+        storagePermissions = arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
     }
 
     // Checking user permission
@@ -129,6 +253,7 @@ class MainActivity : AppCompatActivity() {
                                 location.longitude
                             )
                         binding.tvLokasi.text = address
+                        locationDetected = address
                     }
                 }
             } else {
@@ -168,6 +293,7 @@ class MainActivity : AppCompatActivity() {
                     lastLocation.longitude
                 )
             binding.tvLokasi.text = address
+            locationDetected = address
         }
     }
 
