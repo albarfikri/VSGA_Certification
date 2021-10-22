@@ -20,10 +20,23 @@ import java.util.*
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
-    // Permission id
+    // Permission id location
     private var permissionId = 1000
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     lateinit var locationRequest: LocationRequest
+
+    // Permission id camera
+    private val cameraRequestCode = 2000
+    private val storageResourceCode = 2001
+
+    // Image Pick
+    private val imagePickCameraCode = 2002
+    private val imagePickGalleryCode = 2003
+
+    // arrays of permission
+    private lateinit var cameraPermissions: Array<String>
+    private lateinit var storagePermissions: Array<String>
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,9 +49,13 @@ class MainActivity : AppCompatActivity() {
         // add Event Button
         binding.btnLokasi.setOnClickListener {
             requestPermission()
-            binding.tvLokasi.text = "Loading..."
+            binding.tvLokasi.text = getString(R.string.loading)
             getLastLocation()
         }
+    }
+
+    private fun initCameraPermissions() {
+
     }
 
     // Checking user permission

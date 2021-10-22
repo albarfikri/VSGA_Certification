@@ -126,20 +126,44 @@
         android:id="@+id/btnLokasi"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/btnLokasi"
         android:layout_marginTop="8dp"
+        android:text="@string/btnLokasi"
         app:layout_constraintEnd_toEndOf="@+id/tvLokasiMain"
         app:layout_constraintStart_toStartOf="@+id/tvLokasiMain"
-        app:layout_constraintTop_toBottomOf="@+id/tvLokasiMain"/>
+        app:layout_constraintTop_toBottomOf="@+id/tvLokasiMain" />
 
     <TextView
         android:id="@+id/tvUploadMain"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="32dp"
         android:fontFamily="@font/avenir_medium"
         android:text="@string/tvUpload"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="@+id/tvJenisKelamin"
         app:layout_constraintTop_toBottomOf="@id/btnLokasi" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/profile"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@color/grey"
+        app:layout_constraintBottom_toBottomOf="@+id/tvUploadMain"
+        app:layout_constraintEnd_toEndOf="@+id/rgJenisKelamin"
+        app:layout_constraintStart_toStartOf="@+id/rgJenisKelamin"
+        app:layout_constraintTop_toTopOf="@+id/tvUploadMain" />
+
+    <Button
+        android:id="@+id/btnSubmit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="80dp"
+        android:layout_marginTop="100dp"
+        android:layout_marginEnd="80dp"
+        android:fontFamily="@font/avenir_bold"
+        android:text="@string/btnSubmit"
+        app:layout_constraintEnd_toEndOf="@+id/txtHpMain"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/txtHpMain"
+        app:layout_constraintTop_toBottomOf="@+id/tvUploadMain" />
 </androidx.constraintlayout.widget.ConstraintLayout>

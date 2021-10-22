@@ -9,4 +9,6 @@
     <string name="tvLokasi">Lokasi Pendaftaran</string>
     <string name="btnLokasi">Search</string>
     <string name="tvUpload">Upload Foto</string>
+    <string name="loading">Loading…</string>
+    <string name="btnSubmit">Submit</string>
 </resources>
