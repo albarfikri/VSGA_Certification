@@ -2,7 +2,6 @@ package com.albar.registration
 
 import android.Manifest
 import android.app.Activity
-import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -98,7 +97,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun clear() {
         binding.txtNama.text = null
-        binding.txtAlamat.text= null
+        binding.txtAlamat.text = null
         binding.txtHp.text = null
         binding.rgJenisKelamin.isEnabled = false
         lokasi = null

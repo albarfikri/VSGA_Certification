@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    app:cardBackgroundColor="@color/white"
+    app:cardElevation="1dp"
+    app:cardUseCompatPadding="true"
+    app:contentPadding="3dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profileItem"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_centerVertical="true"
+            android:src="@color/teal_200"
+            app:civ_border_color="@color/grey"
+            app:civ_border_overlay="true"
+            app:civ_border_width="1dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="5dp"
+            android:layout_toEndOf="@id/profileItem"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/namaItem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/avenir_medium"
+                android:text="@string/nama"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/alamatItem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/avenir_medium"
+                android:text="@string/alamat" />
+
+            <TextView
+                android:id="@+id/hpItem"
+                android:fontFamily="@font/avenir_medium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/hp" />
+        </LinearLayout>
+    </RelativeLayout>
+
+
+</androidx.cardview.widget.CardView>
