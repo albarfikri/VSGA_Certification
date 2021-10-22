@@ -1,6 +1,7 @@
 package com.albar.registration
 
 import android.Manifest
+import android.app.Activity
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
@@ -11,15 +12,15 @@ import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
 import android.os.Looper
-import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.albar.registration.databinding.ActivityMainBinding
 import com.google.android.gms.location.*
+import com.theartofdev.edmodo.cropper.CropImage
+import com.theartofdev.edmodo.cropper.CropImageView
 import java.util.*
 
 
@@ -31,16 +32,13 @@ class MainActivity : AppCompatActivity() {
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     lateinit var locationRequest: LocationRequest
 
-    // Permission id camera
-    private val cameraRequestCode = 2000
+    // Storage Id
     private val storageRequestCode = 2001
 
     // Image Pick
-    private val imagePickCameraCode = 2002
     private val imagePickGalleryCode = 2003
 
     // arrays of permission
-    private lateinit var cameraPermissions: Array<String>
     private lateinit var storagePermissions: Array<String>
 
     // Variable to get Location
@@ -54,11 +52,16 @@ class MainActivity : AppCompatActivity() {
     private var lokasi: String? = null
     private var imageUri: Uri? = null
 
+    lateinit var dbHelper: DbHelper
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        //init db
+        dbHelper = DbHelper(this)
 
         // Maps
         // Initiate fuse.providerclient
@@ -71,35 +74,38 @@ class MainActivity : AppCompatActivity() {
             getLastLocation()
         }
 
-        // Image
+        // init Storage Permission
+        initStoragePermissions()
+
         binding.profile.setOnClickListener {
-            // options to display
-            val options = arrayOf("Camera", "Gallery")
-            // settings dialog
-            val builder = AlertDialog.Builder(this)
-            // title
-            builder.setTitle("Pick Image From")
-            // set Item Options
-            builder.setItems(options) { _, selected ->
-                if (selected == 0) {
-                    //camera clicked
-                    if (!checkCameraPermissions()) {
-                        // Permission not granted
-                        requestCameraPermission()
-                    } else {
-                        // Permission already granted
-                        pickFromCamera()
-                    }
-                } else {
-                    //galery clicked
-                    if (!checkStoragePermission()) {
-                        requestStoragePermission()
-                    } else {
-                        pickFromGalery()
-                    }
-                }
-            }
+            selectImage()
         }
+
+        binding.btnSubmit.setOnClickListener {
+            inputData()
+        }
+
+    }
+
+    private fun selectImage() {
+        //galery clicked
+        if (!checkStoragePermission()) {
+            requestStoragePermission()
+        } else {
+            pickFromGalery()
+        }
+    }
+
+    private fun clear() {
+        binding.txtNama.text = null
+        binding.txtAlamat.text= null
+        binding.txtHp.text = null
+        binding.rgJenisKelamin.isEnabled = false
+        lokasi = null
+        binding.txtNama.clearFocus()
+        binding.txtNama.clearFocus()
+        binding.txtAlamat.clearFocus()
+        binding.txtHp.clearFocus()
     }
 
     private fun inputData() {
@@ -112,7 +118,20 @@ class MainActivity : AppCompatActivity() {
             else -> ""
         }
         lokasi = locationDetected
-        image
+
+        // save data to db
+        val timeStamp = System.currentTimeMillis()
+        val id = dbHelper.insertData(
+            "" + nama,
+            "" + alamat,
+            "" + noHp,
+            "" + jenisKelamin,
+            "" + lokasi,
+            "" + imageUri,
+            "" + timeStamp
+        )
+        Toast.makeText(this, "Record Added : $id", Toast.LENGTH_SHORT).show()
+        clear()
     }
 
 
@@ -138,47 +157,8 @@ class MainActivity : AppCompatActivity() {
         ) == PackageManager.PERMISSION_GRANTED
     }
 
-    private fun pickFromCamera() {
-        // pick image from camera using intent
-        val values = ContentValues()
-        values.put(MediaStore.Images.Media.TITLE, "Image Title")
-        values.put(MediaStore.Images.Media.DESCRIPTION, "Image Description")
-        //put image uri
-        val imageUri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
-        // intent at open camera
-        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
-        startActivityForResult(
-            cameraIntent,
-            imagePickCameraCode
-        )
-    }
 
-    private fun checkCameraPermissions(): Boolean {
-        // Check if camera permissions (Camera and Storage) are enabled or not
-        val results = ContextCompat.checkSelfPermission(
-            this,
-            Manifest.permission.CAMERA
-        ) == PackageManager.PERMISSION_GRANTED
-
-        val results1 = ContextCompat.checkSelfPermission(
-            this,
-            Manifest.permission.CAMERA
-        ) == PackageManager.PERMISSION_GRANTED
-
-        return results && results1
-    }
-
-    private fun requestCameraPermission() {
-        // request the camera permissions
-        ActivityCompat.requestPermissions(this, cameraPermissions, cameraRequestCode)
-    }
-
-    private fun initCameraPermissions() {
-        cameraPermissions = arrayOf(
-            Manifest.permission.CAMERA,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
-        )
+    private fun initStoragePermissions() {
         storagePermissions = arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
     }
 
@@ -225,11 +205,63 @@ class MainActivity : AppCompatActivity() {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         // this is a build in function that check the permission result
-        if (requestCode == permissionId) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Log.d("Debug:", "You have got the permission")
+        when (requestCode) {
+            permissionId -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.d("Debug:", "You have got the permission")
+                } else {
+                    Toast.makeText(
+                        this,
+                        "You need to get gps Access",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+            storageRequestCode -> {
+                if (grantResults.isNotEmpty()) {
+                    // if allowed returns true otherwise false
+                    val storageAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED
+                    if (storageAccepted) {
+                        pickFromGalery()
+                    } else {
+                        Toast.makeText(
+                            this,
+                            "Storage permission is required",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
             }
         }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        //image picked from camera or gallery will be received here
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == imagePickGalleryCode) {
+                //picked from gallery
+                //crop image
+                CropImage.activity(data!!.data)
+                    .setGuidelines(CropImageView.Guidelines.ON)
+                    .setAspectRatio(1, 1)
+                    .start(this)
+            } else if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+                //cropped image received
+                val result = CropImage.getActivityResult(data)
+                if (resultCode == Activity.RESULT_OK) {
+                    val resultUri = result.uri
+                    imageUri = resultUri
+                    // set Image
+                    binding.profile.setImageURI(resultUri)
+                } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                    //error
+                    val error = result.error
+                    Toast.makeText(this, "" + error, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data)
+
     }
 
     // function that will allow us to get the last location

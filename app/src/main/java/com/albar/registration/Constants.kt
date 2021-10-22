@@ -22,14 +22,14 @@ object Constants {
 
     // create table query
     const val createTable = (
-            "CREATE TABLE" + tableName + "("
+            "CREATE TABLE " + tableName + "("
                     + cId + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                     + cNama + " TEXT,"
                     + cAlamat + " TEXT,"
                     + cNoHp + " TEXT,"
                     + cJenisKelamin + " TEXT,"
                     + cLokasi + " TEXT,"
-                    + cImageUri + " TEXT"
+                    + cImageUri + " TEXT,"
                     + cAddedTimestamp + " TEXT"
                     + ")"
             )
