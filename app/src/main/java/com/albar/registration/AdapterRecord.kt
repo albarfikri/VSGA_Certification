@@ -12,7 +12,7 @@ import com.albar.registration.databinding.ItemRecordBinding
 
 class AdapterRecord() : RecyclerView.Adapter<AdapterRecord.HolderRecord>() {
 
-    private var context: Context = null
+    private var context: Context? = null
     private var recordList: ArrayList<RecordModel>? = null
 
     constructor(context: Context?, recordList: ArrayList<RecordModel>?) : this() {
@@ -55,7 +55,7 @@ class AdapterRecord() : RecyclerView.Adapter<AdapterRecord.HolderRecord>() {
             itemView.setOnClickListener {
                 val moveToDetail = Intent(context, RecordDetail::class.java)
                 moveToDetail.putExtra(RecordDetail.data, model)
-                startActivity(context,moveToDetail,null)
+                startActivity(context!!,moveToDetail,null)
             }
         }
     }

@@ -1,5 +1,6 @@
 package com.albar.registration
 
+import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.albar.registration.databinding.ActivityRecordDetailBinding
@@ -24,12 +25,16 @@ class RecordDetail : AppCompatActivity() {
 
         val data = intent.getParcelableExtra<RecordModel>(data) as RecordModel
 
-        binding.txtNama.text = data.mNama
+
+        binding.txtNama.setText(data.mNama)
+        binding.txtAlamat.setText(data.mAlamat)
+        binding.txtHp.setText(data.mNoHp)
+        binding.tvLokasi.setText(data.mLokasi)
+        binding.tvJenisKelamin.setText(data.mJenisKelamin)
+        binding.profile.setImageURI(Uri.parse(data.mImageUri))
+
     }
 
-    private fun setDetail() {
-        binding.txtNama.text = nama
-    }
 
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
