@@ -8,7 +8,7 @@ class RecordActivity : AppCompatActivity() {
     // db helper
     lateinit var dbHelper: DbHelper
 
-    // orderby/sor queries
+    // order by/sor queries
     private val latestFirst = "${Constants.cAddedTimestamp} DESC"
 
     private lateinit var binding: ActivityRecordBinding
@@ -24,8 +24,17 @@ class RecordActivity : AppCompatActivity() {
         //load Records
         loadRecords()
 
+        // return back to the previous activity
+        supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(true)
+            setDisplayHomeAsUpEnabled(true)
+        }
     }
 
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return true
+    }
 
     override fun onResume() {
         super.onResume()

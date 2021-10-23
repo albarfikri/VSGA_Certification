@@ -347,7 +347,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // function to get the address
+    // function to get city
     private fun getCity(lat: Double, long: Double): String {
         var cityName = ""
         val geoCoder = Geocoder(this, Locale.getDefault())
@@ -357,6 +357,7 @@ class MainActivity : AppCompatActivity() {
         return cityName
     }
 
+    // function to get country
     private fun getCountryName(lat: Double, long: Double): String {
         var countryName = ""
         val geoCoder = Geocoder(this, Locale.getDefault())
@@ -365,5 +366,4 @@ class MainActivity : AppCompatActivity() {
 
         return countryName
     }
-
 }

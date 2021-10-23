@@ -4,25 +4,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
+    android:padding="8dp"
     tools:context=".RecordActivity">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvRecord"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         tools:layout_editor_absoluteX="16dp"
-        tools:listitem="@layout/item_record"
-        tools:layout_editor_absoluteY="16dp" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/back"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/rvRecord"
-        app:layout_constraintEnd_toEndOf="@+id/rvRecord"
-        android:contentDescription="@string/back" />
+        tools:layout_editor_absoluteY="16dp"
+        tools:listitem="@layout/item_record" />
 </androidx.constraintlayout.widget.ConstraintLayout>
