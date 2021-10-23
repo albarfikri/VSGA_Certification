@@ -15,7 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Registration">
         <activity
-            android:name=".Record_Activity"
+            android:name=".RecordActivity"
             android:exported="true" />
         <activity
             android:name=".MainActivity"

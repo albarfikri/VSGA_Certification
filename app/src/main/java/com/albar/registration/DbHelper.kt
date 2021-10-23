@@ -4,6 +4,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import java.util.*
 
 class DbHelper(context: Context) : SQLiteOpenHelper(
     context,
@@ -50,5 +51,65 @@ class DbHelper(context: Context) : SQLiteOpenHelper(
         db.close()
         //return id of inserted record
         return id
+    }
+
+    // get All Data
+    fun getAllData(orderBy: String): ArrayList<RecordModel> {
+        val recordList = ArrayList<RecordModel>()
+        val selectQuery = "SELECT * FROM ${Constants.tableName} ORDER BY $orderBy"
+
+        val db = this.writableDatabase
+        val cursor = db.rawQuery(selectQuery, null)
+
+        if (cursor.moveToFirst()) {
+            do {
+                val modelRecord = RecordModel(
+                    "" + cursor.getString(cursor.getColumnIndex(Constants.cId)),
+                    "" + cursor.getString(cursor.getColumnIndex(Constants.cNama)),
+                    "" + cursor.getString(cursor.getColumnIndex(Constants.cAlamat)),
+                    "" + cursor.getString(cursor.getColumnIndex(Constants.cNoHp)),
+                    "" + cursor.getString(cursor.getColumnIndex(Constants.cJenisKelamin)),
+                    "" + cursor.getString(cursor.getColumnIndex(Constants.cLokasi)),
+                    "" + cursor.getString(cursor.getColumnIndex(Constants.cImageUri)),
+                    "" + cursor.getString(cursor.getColumnIndex(Constants.cAddedTimestamp))
+                )
+                //add record to list
+                recordList.add(modelRecord)
+            } while (cursor.moveToNext())
+        }
+        // close db connection
+        db.close()
+        // return the queried result list
+        return recordList
+    }
+
+    // search data
+    fun searchRecord(query: String): ArrayList<RecordModel> {
+        val recordList = ArrayList<RecordModel>()
+        val selectQuery = "SELECT * FROM ${Constants.tableName} WHERE ${Constants.cNama} LIKE'% $query %"
+
+        val db = this.writableDatabase
+        val cursor = db.rawQuery(selectQuery, null)
+
+        if (cursor.moveToFirst()) {
+            do {
+                val modelRecord = RecordModel(
+                    "" + cursor.getString(cursor.getColumnIndex(Constants.cId)),
+                    "" + cursor.getString(cursor.getColumnIndex(Constants.cNama)),
+                    "" + cursor.getString(cursor.getColumnIndex(Constants.cAlamat)),
+                    "" + cursor.getString(cursor.getColumnIndex(Constants.cNoHp)),
+                    "" + cursor.getString(cursor.getColumnIndex(Constants.cJenisKelamin)),
+                    "" + cursor.getString(cursor.getColumnIndex(Constants.cLokasi)),
+                    "" + cursor.getString(cursor.getColumnIndex(Constants.cImageUri)),
+                    "" + cursor.getString(cursor.getColumnIndex(Constants.cAddedTimestamp))
+                )
+                //add record to list
+                recordList.add(modelRecord)
+            } while (cursor.moveToNext())
+        }
+        // close db connection
+        db.close()
+        // return the queried result list
+        return recordList
     }
 }

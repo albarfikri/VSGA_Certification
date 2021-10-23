@@ -11,4 +11,6 @@
     <string name="tvUpload">Upload Foto</string>
     <string name="loading">Loading…</string>
     <string name="btnSubmit">Submit</string>
+    <string name="back">Back</string>
+    <string name="records">Records</string>
 </resources>

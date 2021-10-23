@@ -1,6 +1,6 @@
 package com.albar.registration
 
-object Constants {
+object  Constants {
     //db name
     const val dbName = "vaccination"
 
